@@ -1,2 +1,0 @@
-Explicancion del diagrama
-
