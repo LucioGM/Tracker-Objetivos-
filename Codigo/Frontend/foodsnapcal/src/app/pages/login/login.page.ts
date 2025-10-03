@@ -3,8 +3,7 @@ import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { Auth } from 'src/app/services/auth';
-
+import { Auth } from '../../auth';
 @Component({
   selector: 'app-login',
   standalone: true,

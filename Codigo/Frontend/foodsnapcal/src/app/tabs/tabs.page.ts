@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
-import { Auth } from 'src/app/services/auth';
-
+import { Auth } from '../auth';
 
 import {
   IonTabs,
