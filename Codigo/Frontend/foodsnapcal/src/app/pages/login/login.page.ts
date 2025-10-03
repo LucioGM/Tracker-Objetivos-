@@ -26,7 +26,7 @@ export class LoginPage {
   async login() {
     const { data, error } = await this.auth.login(this.email, this.password);
 
-    if (error) {
+    if (!error) {
       this.errorMessage = error.message;
       console.error(error);
     } else {
