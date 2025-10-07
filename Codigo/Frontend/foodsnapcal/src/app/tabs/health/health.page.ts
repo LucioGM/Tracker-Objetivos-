@@ -2,22 +2,34 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
-  IonContent,
   IonHeader,
-  IonTitle,
   IonToolbar,
+  IonTitle,
+  IonContent,
   IonList,
   IonItem,
-  IonLabel,
-  IonProgressBar,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
   IonButton,
-  IonFab,
-  IonFabButton,
-  IonIcon,
-  AlertController
+  IonRadioGroup,
+  IonRadio,
+  IonLabel,
+  IonText,
+  IonProgressBar
 } from '@ionic/angular/standalone';
-import { addIcons } from 'ionicons';
-import { add } from 'ionicons/icons';
+
+interface Goal {
+  id: number;
+  name: string;
+  selectedDuration?: string;
+  tempDuration?: string;
+  expanded?: boolean;
+  progress?: number; // 0 a 100
+  durationMs?: number; // duración en milisegundos
+  intervalId?: any; // para almacenar setInterval
+  showProgress?: boolean; // para mostrar solo la barra
+}
 
 @Component({
   selector: 'app-health',
@@ -25,52 +37,72 @@ import { add } from 'ionicons/icons';
   styleUrls: ['./health.page.scss'],
   standalone: true,
   imports: [
-    IonContent, IonHeader, IonTitle, IonToolbar,
-    IonList, IonItem, IonLabel, IonProgressBar, IonButton,
-    IonFab, IonFabButton, IonIcon,
-    CommonModule, FormsModule
+    CommonModule,
+    FormsModule,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    IonList,
+    IonItem,
+    IonCard,
+    IonCardContent,
+    IonCardHeader,
+    IonButton,
+    IonRadioGroup,
+    IonRadio,
+    IonLabel,
+    IonText,
+    IonProgressBar
   ]
 })
 export class HealthPage implements OnInit {
-  goals = [
-    { name: 'Beber 2L de agua', progress: 50 },
-    { name: 'Dormir 8 horas', progress: 70 },
-    { name: 'Ejercicio diario', progress: 30 },
-  ];
 
-  constructor(private alertController: AlertController) {
-    addIcons({ add });
+  goals: Goal[] = [];
+
+  constructor() { }
+
+  ngOnInit() {
+    this.goals = [
+      { id: 1, name: 'Beber agua' },
+      { id: 2, name: 'Hacer ejercicio' },
+      { id: 3, name: 'Leer un capítulo' }
+    ];
   }
 
-  ngOnInit() {}
+  setDuration(goal: Goal) {
+    if (!goal.tempDuration) return;
 
-  increaseProgress(goal: any) {
-    goal.progress = Math.min(goal.progress + 10, 100);
-  }
+    goal.selectedDuration = goal.tempDuration;
+    goal.showProgress = true;
+    goal.progress = 0;
 
-  async addGoal() {
-    const alert = await this.alertController.create({
-      header: 'Nuevo objetivo',
-      inputs: [
-        {
-          name: 'goalName',
-          type: 'text',
-          placeholder: 'Ej: Meditar 10 min'
-        }
-      ],
-      buttons: [
-        { text: 'Cancelar', role: 'cancel' },
-        {
-          text: 'Agregar',
-          handler: (data) => {
-            if (data.goalName.trim() !== '') {
-              this.goals.push({ name: data.goalName, progress: 0 });
-            }
-          }
-        }
-      ]
-    });
+    // Convertir duración a milisegundos
+    switch (goal.selectedDuration) {
+      case '1 día':
+        goal.durationMs = 24 * 60 * 60 * 1000;
+        break;
+      case '1 semana':
+        goal.durationMs = 7 * 24 * 60 * 60 * 1000;
+        break;
+      case '1 mes':
+        goal.durationMs = 30 * 24 * 60 * 60 * 1000;
+        break;
+      default:
+        goal.durationMs = 1000; // por seguridad
+    }
 
-    await alert.present();
+    // Limpiar interval previo si existiera
+    if (goal.intervalId) clearInterval(goal.intervalId);
+
+    const intervalTime = 1000; // actualiza cada segundo
+    const increment = 100 / (goal.durationMs / intervalTime); // % por segundo
+
+    goal.intervalId = setInterval(() => {
+      goal.progress! += increment;
+      if (goal.progress! >= 100) {
+        goal.progress = 0; // reinicia al llegar a 100
+      }
+    }, intervalTime);
   }
 }

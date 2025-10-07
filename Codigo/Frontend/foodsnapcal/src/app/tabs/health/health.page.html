@@ -5,24 +5,49 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" class="ion-padding">
-  <!-- Lista de objetivos -->
   <ion-list>
-    <ion-item *ngFor="let goal of goals">
-      <ion-label>
-        <h2>{{ goal.name }}</h2>
-        <p>Progreso: {{ goal.progress }}%</p>
-        <ion-progress-bar [value]="goal.progress / 100"></ion-progress-bar>
-      </ion-label>
-      <ion-button fill="outline" slot="end" (click)="increaseProgress(goal)">
-        +10%
-      </ion-button>
-    </ion-item>
-  </ion-list>
+    <ion-card *ngFor="let goal of goals">
+      <ion-item button (click)="goal.expanded = !goal.expanded">
+        <ion-label>
+          <h2>{{ goal.name }}</h2>
+        </ion-label>
+      </ion-item>
 
-  <!-- Botón flotante para agregar un nuevo objetivo -->
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button color="success" (click)="addGoal()">
-      <ion-icon name="add"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
+      <div *ngIf="goal.expanded">
+        <ion-card-content>
+
+          <!-- Solo mostrar opciones si no se fijó duración -->
+          <ng-container *ngIf="!goal.showProgress">
+            <ion-radio-group [(ngModel)]="goal.tempDuration">
+              <ion-list>
+                <ion-item>
+                  <ion-label>1 día</ion-label>
+                  <ion-radio slot="start" value="1 día"></ion-radio>
+                </ion-item>
+                <ion-item>
+                  <ion-label>1 semana</ion-label>
+                  <ion-radio slot="start" value="1 semana"></ion-radio>
+                </ion-item>
+                <ion-item>
+                  <ion-label>1 mes</ion-label>
+                  <ion-radio slot="start" value="1 mes"></ion-radio>
+                </ion-item>
+              </ion-list>
+            </ion-radio-group>
+
+            <ion-button expand="block" (click)="setDuration(goal)">
+              Fijar Duración
+            </ion-button>
+          </ng-container>
+
+          <!-- Mostrar barra de progreso si se fijó duración -->
+          <ng-container *ngIf="goal.showProgress">
+            <ion-progress-bar [value]="goal.progress! / 100" color="success"></ion-progress-bar>
+            <p class="ion-text-end">{{ goal.progress | number: '1.0-0' }}%</p>
+          </ng-container>
+
+        </ion-card-content>
+      </div>
+    </ion-card>
+  </ion-list>
 </ion-content>
