@@ -1,13 +1,30 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>stats</ion-title>
+    <ion-title>Estadísticas</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">stats</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding">
+
+  <h2>Objetivos</h2>
+
+  <ion-list>
+    <ion-item *ngFor="let obj of objectives$ | async">
+      <ion-label>
+        <h2>{{ obj.title }}</h2>
+        <p>{{ obj.progress }}%</p>
+      </ion-label>
+      <ion-progress-bar [value]="obj.progress / 100" [color]="getProgressColor(obj.progress)"></ion-progress-bar>
+    </ion-item>
+  </ion-list>
+
+  <h2 class="ion-margin-top">Resumen gráfico</h2>
+
+  <div *ngFor="let obj of objectives$ | async" class="bar-container">
+    <div class="bar-label">{{ obj.title }} ({{ obj.progress }}%)</div>
+    <div class="bar-background">
+      <div class="bar-fill" [style.width.%]="obj.progress" [style.backgroundColor]="getProgressColor(obj.progress)"></div>
+    </div>
+  </div>
+
 </ion-content>
