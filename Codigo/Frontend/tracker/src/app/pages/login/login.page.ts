@@ -4,6 +4,7 @@ import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { Auth } from '../../auth';
+
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -26,10 +27,14 @@ export class LoginPage {
   async login() {
     const { data, error } = await this.auth.login(this.email, this.password);
 
-    if (!error) {
+    if (error) {
       this.errorMessage = error.message;
-      console.error(error);
+      console.error('Error al iniciar sesión:', error);
     } else {
+      this.errorMessage = '';
+      if (data && data.user) {
+        console.log('Usuario logueado:', data.user);
+      }
       this.router.navigateByUrl('/tabs');
     }
   }
