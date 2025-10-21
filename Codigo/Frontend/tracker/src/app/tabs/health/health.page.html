@@ -1,53 +1,56 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar color="primary">
-    <ion-title>Seguimiento de Objetivos</ion-title>
+    <ion-title>Calendario de Metas</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="ion-padding">
-  <ion-list>
-    <ion-card *ngFor="let goal of goals">
-      <ion-item button (click)="goal.expanded = !goal.expanded">
-        <ion-label>
-          <h2>{{ goal.name }}</h2>
-        </ion-label>
+<ion-content class="ion-padding">
+
+  <!-- 📅 Formulario de nueva meta -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Agregar Meta</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="stacked">Título</ion-label>
+        <ion-input [(ngModel)]="nuevaMeta.titulo" placeholder="Ej: Ir al gimnasio"></ion-input>
       </ion-item>
 
-      <div *ngIf="goal.expanded">
-        <ion-card-content>
+      <ion-item>
+        <ion-label position="stacked">Descripción</ion-label>
+        <ion-input [(ngModel)]="nuevaMeta.descripcion" placeholder="Detalles opcionales"></ion-input>
+      </ion-item>
 
-          <!-- Solo mostrar opciones si no se fijó duración -->
-          <ng-container *ngIf="!goal.showProgress">
-            <ion-radio-group [(ngModel)]="goal.tempDuration">
-              <ion-list>
-                <ion-item>
-                  <ion-label>1 día</ion-label>
-                  <ion-radio slot="start" value="1 día"></ion-radio>
-                </ion-item>
-                <ion-item>
-                  <ion-label>1 semana</ion-label>
-                  <ion-radio slot="start" value="1 semana"></ion-radio>
-                </ion-item>
-                <ion-item>
-                  <ion-label>1 mes</ion-label>
-                  <ion-radio slot="start" value="1 mes"></ion-radio>
-                </ion-item>
-              </ion-list>
-            </ion-radio-group>
+      <ion-item>
+        <ion-label position="stacked">Fecha</ion-label>
+        <ion-datetime display-format="DD/MM/YYYY" [(ngModel)]="nuevaMeta.fecha"></ion-datetime>
+      </ion-item>
 
-            <ion-button expand="block" (click)="setDuration(goal)">
-              Fijar Duración
-            </ion-button>
-          </ng-container>
+      <ion-button expand="block" color="success" (click)="agregarMeta()">Guardar Meta</ion-button>
+    </ion-card-content>
+  </ion-card>
 
-          <!-- Mostrar barra de progreso si se fijó duración -->
-          <ng-container *ngIf="goal.showProgress">
-            <ion-progress-bar [value]="goal.progress! / 100" color="success"></ion-progress-bar>
-            <p class="ion-text-end">{{ goal.progress | number: '1.0-0' }}%</p>
-          </ng-container>
+  <!-- 📋 Lista de metas -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Mis Metas</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item *ngFor="let meta of metas">
+          <ion-checkbox slot="start" [checked]="meta.completada" (ionChange)="toggleCompletada(meta)"></ion-checkbox>
+          <ion-label>
+            <h2 [class.completada]="meta.completada">{{ meta.titulo }}</h2>
+            <p>{{ meta.descripcion }}</p>
+            <small>📅 {{ meta.fecha | date:'dd/MM/yyyy' }}</small>
+          </ion-label>
+          <ion-button fill="clear" color="danger" (click)="eliminarMeta(meta.id)">
+            <ion-icon name="trash-outline"></ion-icon>
+          </ion-button>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
 
-        </ion-card-content>
-      </div>
-    </ion-card>
-  </ion-list>
 </ion-content>

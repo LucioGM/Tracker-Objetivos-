@@ -1,41 +1,41 @@
-/* Estilos para HealthPage */
-
 ion-card {
-  margin-bottom: 16px;
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  border-radius: 14px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  margin-bottom: 20px;
 }
 
-ion-item {
-  cursor: pointer;
-}
-
-ion-card-content {
-  padding-top: 8px;
-}
-
-ion-radio-group {
-  margin-top: 8px;
-  margin-bottom: 8px;
-}
-
-ion-button {
-  margin-top: 8px;
-}
-
-ion-text {
-  margin-top: 8px;
-  display: block;
-  font-weight: bold;
+ion-card-title {
+  font-size: 1.3rem;
+  color: #1e1e1e;
   text-align: center;
 }
 
-ion-header {
-  --background: #3880ff;
-  color: white;
+ion-item {
+  border-radius: 8px;
+  margin-top: 8px;
 }
 
-ion-title {
-  font-size: 20px;
-  font-weight: bold;
+ion-button {
+  margin-top: 15px;
+  --border-radius: 10px;
+}
+
+h2 {
+  font-size: 1.1rem;
+  margin-bottom: 4px;
+}
+
+h2.completada {
+  text-decoration: line-through;
+  color: gray;
+}
+
+p {
+  margin: 0;
+  color: #555;
+}
+
+small {
+  color: #666;
+  font-size: 0.8rem;
 }

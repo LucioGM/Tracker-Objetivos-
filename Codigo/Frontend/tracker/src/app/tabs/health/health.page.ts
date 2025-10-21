@@ -2,33 +2,35 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonContent,
-  IonList,
+  IonHeader,
+  IonTitle,
+  IonToolbar,
   IonItem,
-  IonCard,
-  IonCardContent,
-  IonCardHeader,
-  IonButton,
-  IonRadioGroup,
-  IonRadio,
   IonLabel,
-  IonText,
-  IonProgressBar
+  IonInput,
+  IonDatetime,
+  IonButton,
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardContent,
+  IonList,
+  IonCheckbox,
+  IonIcon,
+  AlertController,
 } from '@ionic/angular/standalone';
 
-interface Goal {
-  id: number;
-  name: string;
-  selectedDuration?: string;
-  tempDuration?: string;
-  expanded?: boolean;
-  progress?: number; // 0 a 100
-  durationMs?: number; // duración en milisegundos
-  intervalId?: any; // para almacenar setInterval
-  showProgress?: boolean; // para mostrar solo la barra
+import { SupabaseService } from '../../services/objectives/supabase.service';
+import { addIcons } from 'ionicons';
+import { trashOutline } from 'ionicons/icons';
+
+interface Meta {
+  id?: number;
+  titulo: string;
+  descripcion?: string;
+  fecha: string;
+  completada: boolean;
 }
 
 @Component({
@@ -39,70 +41,83 @@ interface Goal {
   imports: [
     CommonModule,
     FormsModule,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
     IonContent,
-    IonList,
+    IonHeader,
+    IonTitle,
+    IonToolbar,
     IonItem,
-    IonCard,
-    IonCardContent,
-    IonCardHeader,
-    IonButton,
-    IonRadioGroup,
-    IonRadio,
     IonLabel,
-    IonText,
-    IonProgressBar
-  ]
+    IonInput,
+    IonDatetime,
+    IonButton,
+    IonCard,
+    IonCardHeader,
+    IonCardTitle,
+    IonCardContent,
+    IonList,
+    IonCheckbox,
+    IonIcon, // ✅ agregado para que funcione <ion-icon>
+  ],
 })
 export class HealthPage implements OnInit {
+  metas: Meta[] = [];
+  nuevaMeta: Partial<Meta> = { titulo: '', descripcion: '', fecha: '' };
 
-  goals: Goal[] = [];
-
-  constructor() { }
-
-  ngOnInit() {
-    this.goals = [
-      { id: 1, name: 'Beber agua' },
-      { id: 2, name: 'Hacer ejercicio' },
-      { id: 3, name: 'Leer un capítulo' }
-    ];
+  constructor(
+    private supabaseService: SupabaseService,
+    private alertCtrl: AlertController
+  ) {
+    addIcons({ trashOutline }); // ✅ registrar el icono
   }
 
-  setDuration(goal: Goal) {
-    if (!goal.tempDuration) return;
+  async ngOnInit() {
+    await this.cargarMetas();
+  }
 
-    goal.selectedDuration = goal.tempDuration;
-    goal.showProgress = true;
-    goal.progress = 0;
+  async cargarMetas() {
+    const { data, error } = await this.supabaseService.client
+      .from('metas_calendario')
+      .select('*')
+      .order('fecha', { ascending: true });
+    if (!error) this.metas = data || [];
+  }
 
-    // Convertir duración a milisegundos
-    switch (goal.selectedDuration) {
-      case '1 día':
-        goal.durationMs = 24 * 60 * 60 * 1000;
-        break;
-      case '1 semana':
-        goal.durationMs = 7 * 24 * 60 * 60 * 1000;
-        break;
-      case '1 mes':
-        goal.durationMs = 30 * 24 * 60 * 60 * 1000;
-        break;
-      default:
-        goal.durationMs = 1000; // por seguridad
+  async agregarMeta() {
+    if (!this.nuevaMeta.titulo || !this.nuevaMeta.fecha) {
+      const alert = await this.alertCtrl.create({
+        header: 'Campos incompletos',
+        message: 'Debes ingresar un título y una fecha.',
+        buttons: ['OK'],
+      });
+      await alert.present();
+      return;
     }
 
-    // Limpiar interval previo si existiera
-    if (goal.intervalId) clearInterval(goal.intervalId);
+    const { error } = await this.supabaseService.client
+      .from('metas_calendario')
+      .insert([this.nuevaMeta]);
 
-    const intervalTime = 1000; // actualiza cada segundo
-    const increment = 100 / (goal.durationMs / intervalTime); // % por segundo
+    if (!error) {
+      this.nuevaMeta = { titulo: '', descripcion: '', fecha: '' };
+      await this.cargarMetas();
+    }
+  }
 
-    goal.intervalId = setInterval(() => {
-      goal.progress! += increment;
-      if (goal.progress! >= 100) {
-        goal.progress = 0; // reinicia al llegar a 100
-      }
-    }, intervalTime);
+  async toggleCompletada(meta: Meta) {
+    const { error } = await this.supabaseService.client
+      .from('metas_calendario')
+      .update({ completada: !meta.completada })
+      .eq('id', meta.id);
+
+    if (!error) await this.cargarMetas();
+  }
+
+  async eliminarMeta(id?: number) {
+    const { error } = await this.supabaseService.client
+      .from('metas_calendario')
+      .delete()
+      .eq('id', id);
+
+    if (!error) await this.cargarMetas();
   }
 }
