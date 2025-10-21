@@ -4,29 +4,46 @@ ion-card {
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-.bar-container {
+ion-list {
+  margin-top: 10px;
+}
+
+ion-item {
   margin-bottom: 10px;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
 }
 
-.bar-label {
-  font-weight: bold;
-  margin-bottom: 4px;
-}
-
-.bar-background {
-  background-color: #e0e0e0;
-  border-radius: 5px;
-  height: 20px;
-  width: 100%;
-}
-
-.bar-fill {
-  height: 100%;
-  border-radius: 5px;
-  transition: width 0.3s ease-in-out;
+ion-progress-bar {
+  height: 12px;
+  border-radius: 6px;
+  margin-top: 5px;
 }
 
 h2 {
   margin-bottom: 10px;
   font-size: 1.2rem;
+  color: white;
+}
+
+/* Gráfico más compacto y proporcional */
+.chart-card {
+  height: 750px; /* ajusta este valor si quieres más pequeño o grande */
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.chart-wrapper {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  padding: 10px;
+}
+
+canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
 }

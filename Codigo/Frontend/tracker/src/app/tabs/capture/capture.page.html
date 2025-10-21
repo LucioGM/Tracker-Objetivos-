@@ -1,13 +1,67 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>capture</ion-title>
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Cuestionario Capture</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">capture</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding">
+
+  <!-- Formulario -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Motivación</ion-card-title>
+      <ion-card-subtitle>Evalúa tu motivación</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-range min="0" max="10" step="1" [(ngModel)]="motivacion"></ion-range>
+      <p>Valor: {{ motivacion }}</p>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Progreso</ion-card-title>
+      <ion-card-subtitle>Evalúa tu progreso</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-range min="0" max="10" step="1" [(ngModel)]="progreso"></ion-range>
+      <p>Valor: {{ progreso }}</p>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Mejoras</ion-card-title>
+      <ion-card-subtitle>Sugerencias de mejora</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="stacked">Mejora</ion-label>
+        <ion-input [(ngModel)]="mejora" placeholder="Escribe aquí..."></ion-input>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-button expand="block" color="success" (click)="guardarRespuestas()">
+    Guardar Respuestas
+  </ion-button>
+
+  <!-- Lista de respuestas -->
+  <ion-card *ngIf="respuestas.length > 0">
+    <ion-card-header>
+      <ion-card-title>Respuestas Registradas</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item *ngFor="let r of respuestas">
+          <ion-label>
+            <h2>Motivación: {{ r.motivacion }} | Progreso: {{ r.progreso }}</h2>
+            <p>Mejora: {{ r.mejora }}</p>
+            <p style="font-size: 0.8rem; color: #888;">Fecha: {{ r.created_at | date:'short' }}</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
 </ion-content>
