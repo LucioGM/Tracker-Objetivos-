@@ -9,6 +9,14 @@ import {
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { add } from 'ionicons/icons';
+import { ObjectiveService } from '../../services/objectives/objective';
+import { SupabaseService } from '../../services/objectives/supabase.service';
+
+interface Objective {
+  id?: number;
+  title: string;
+  progress: number;
+}
 
 @Component({
   selector: 'app-home',
@@ -24,11 +32,8 @@ import { add } from 'ionicons/icons';
   ]
 })
 export class HomePage implements OnInit {
-  goals = [
-    { name: 'Terminar el proyecto', progress: 80 },
-    { name: 'Leer 10 páginas diarias', progress: 50 },
-    { name: 'Salir a caminar', progress: 30 },
-  ];
+  goals: Objective[] = [];
+
   get totalGoals() {
     return this.goals.length;
   }
@@ -41,14 +46,23 @@ export class HomePage implements OnInit {
     return this.goals.filter(g => g.progress > 0 && g.progress < 100).length;
   }
 
-  constructor(private alertController: AlertController) {
+  constructor(
+    private alertController: AlertController,
+    private objectiveService: ObjectiveService,
+    private supabaseService: SupabaseService
+  ) {
     addIcons({ add });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.objectiveService.getObjectives().subscribe(goals => {
+      this.goals = goals;
+    });
+  }
 
-  increaseProgress(goal: any) {
+  async increaseProgress(goal: Objective) {
     goal.progress = Math.min(goal.progress + 10, 100);
+    await this.objectiveService.updateProgress(goal.id!, goal.progress);
   }
 
   async addGoal() {
@@ -59,9 +73,10 @@ export class HomePage implements OnInit {
         { text: 'Cancelar', role: 'cancel' },
         {
           text: 'Agregar',
-          handler: (data) => {
+          handler: async (data) => {
             if (data.goalName.trim() !== '') {
-              this.goals.push({ name: data.goalName, progress: 0 });
+              await this.objectiveService.addObjective(data.goalName);
+              this.objectiveService.getObjectives().subscribe(goals => this.goals = goals);
             }
           }
         }

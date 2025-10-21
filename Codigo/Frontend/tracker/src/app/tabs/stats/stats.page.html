@@ -1,30 +1,44 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar color="primary">
     <ion-title>Estadísticas</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
 
-  <h2>Objetivos</h2>
+  <!-- 🔹 Lista de objetivos con progreso -->
+  <ion-card>
+    <ion-card-content>
+      <h2>Objetivos</h2>
+      <ion-list>
+        <ion-item *ngFor="let goal of objectives$ | async">
+          <ion-label>
+            <h2>{{ goal.title }}</h2>
+            <p>Progreso: {{ goal.progress }}%</p>
+          </ion-label>
+          <ion-progress-bar [value]="goal.progress / 100" [color]="getProgressColor(goal.progress)"></ion-progress-bar>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
 
-  <ion-list>
-    <ion-item *ngFor="let obj of objectives$ | async">
-      <ion-label>
-        <h2>{{ obj.title }}</h2>
-        <p>{{ obj.progress }}%</p>
-      </ion-label>
-      <ion-progress-bar [value]="obj.progress / 100" [color]="getProgressColor(obj.progress)"></ion-progress-bar>
-    </ion-item>
-  </ion-list>
-
-  <h2 class="ion-margin-top">Resumen gráfico</h2>
-
-  <div *ngFor="let obj of objectives$ | async" class="bar-container">
-    <div class="bar-label">{{ obj.title }} ({{ obj.progress }}%)</div>
-    <div class="bar-background">
-      <div class="bar-fill" [style.width.%]="obj.progress" [style.backgroundColor]="getProgressColor(obj.progress)"></div>
-    </div>
-  </div>
+  <!-- 🔹 Resumen gráfico -->
+  <ion-card>
+    <ion-card-content>
+      <h2>Resumen gráfico</h2>
+      <ng-container *ngFor="let goal of objectives$ | async">
+        <div class="bar-container" style="margin-bottom: 10px;">
+          <div class="bar-label">{{ goal.title }} ({{ goal.progress }}%)</div>
+          <div class="bar-background" style="background: #e0e0e0; border-radius: 5px; height: 20px; width: 100%;">
+            <div class="bar-fill"
+                 [style.width.%]="goal.progress"
+                 [style.backgroundColor]="getProgressColor(goal.progress)"
+                 style="height: 100%; border-radius: 5px;">
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </ion-card-content>
+  </ion-card>
 
 </ion-content>

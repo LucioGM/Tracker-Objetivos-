@@ -31,7 +31,7 @@
   <ion-list>
     <ion-item *ngFor="let goal of goals">
       <ion-label>
-        <h2>{{ goal.name }}</h2>
+        <h2>{{ goal.title }}</h2>
         <p>Progreso: {{ goal.progress }}%</p>
         <ion-progress-bar [value]="goal.progress / 100"></ion-progress-bar>
       </ion-label>
