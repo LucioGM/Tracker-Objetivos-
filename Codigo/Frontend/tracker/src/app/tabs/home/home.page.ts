@@ -8,7 +8,7 @@ import {
   IonCard, IonCardContent, AlertController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { add } from 'ionicons/icons';
+import { add, trashOutline } from 'ionicons/icons';
 import { ObjectiveService } from '../../services/objectives/objective';
 import { SupabaseService } from '../../services/objectives/supabase.service';
 
@@ -37,11 +37,11 @@ export class HomePage implements OnInit {
   get totalGoals() {
     return this.goals.length;
   }
-  
+
   get completedGoals() {
     return this.goals.filter(g => g.progress >= 100).length;
   }
-  
+
   get inProgressGoals() {
     return this.goals.filter(g => g.progress > 0 && g.progress < 100).length;
   }
@@ -51,10 +51,14 @@ export class HomePage implements OnInit {
     private objectiveService: ObjectiveService,
     private supabaseService: SupabaseService
   ) {
-    addIcons({ add });
+    addIcons({ add, trashOutline });
   }
 
   ngOnInit() {
+    this.loadGoals();
+  }
+
+  async loadGoals() {
     this.objectiveService.getObjectives().subscribe(goals => {
       this.goals = goals;
     });
@@ -76,8 +80,30 @@ export class HomePage implements OnInit {
           handler: async (data) => {
             if (data.goalName.trim() !== '') {
               await this.objectiveService.addObjective(data.goalName);
-              this.objectiveService.getObjectives().subscribe(goals => this.goals = goals);
+              this.loadGoals();
             }
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  async deleteGoal(goal: Objective) {
+    const alert = await this.alertController.create({
+      header: 'Eliminar objetivo',
+      message: `¿Deseas eliminar "${goal.title}"?`,
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Eliminar',
+          role: 'destructive',
+          handler: async () => {
+            await this.supabaseService.client
+              .from('objectives')
+              .delete()
+              .eq('id', goal.id);
+            this.loadGoals();
           }
         }
       ]

@@ -35,9 +35,16 @@
         <p>Progreso: {{ goal.progress }}%</p>
         <ion-progress-bar [value]="goal.progress / 100"></ion-progress-bar>
       </ion-label>
-      <ion-button fill="outline" slot="end" (click)="increaseProgress(goal)">
-        +10%
-      </ion-button>
+
+      <div slot="end" class="buttons-container">
+        <ion-button fill="outline" color="success" (click)="increaseProgress(goal)">
+          +10%
+        </ion-button>
+
+        <ion-button fill="outline" color="danger" (click)="deleteGoal(goal)">
+          <ion-icon name="trash-outline"></ion-icon>
+        </ion-button>
+      </div>
     </ion-item>
   </ion-list>
 

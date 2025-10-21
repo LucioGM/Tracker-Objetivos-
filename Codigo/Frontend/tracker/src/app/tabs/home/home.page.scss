@@ -1,27 +1,83 @@
+ion-card {
+  margin-bottom: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
 .goal-summary {
   display: flex;
   justify-content: space-between;
-  text-align: center;
+  flex-wrap: wrap;
 }
 
 .summary-box {
-  flex: 1;
-  margin: 0 6px;
-  padding: 10px;
-  border-radius: 10px;
-  background: #f4f4f4;
+  flex: 1 1 30%;
+  background-color: #f8f9fa;
+  padding: 15px;
+  margin: 5px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.08);
 }
 
 .summary-box.completed {
-  background: #c8e6c9;
+  background-color: #d4edda;
 }
 
 .summary-box.in-progress {
-  background: #fff9c4;
+  background-color: #fff3cd;
+}
+
+ion-list {
+  margin-top: 10px;
+}
+
+ion-item {
+  margin-bottom: 10px;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  align-items: center;
+}
+
+/* 🔹 Contenedor de los botones de acción */
+.buttons-container {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* 🔹 Botones individuales */
+ion-button {
+  --border-radius: 8px;
+  font-size: 0.8rem;
+  min-width: 60px;
+  height: 32px;
+  padding: 0;
+}
+
+/* 🔹 Icono de eliminar */
+ion-button[color="danger"] {
+  --border-color: #dc3545;
+  --color: #dc3545;
 }
 
 ion-progress-bar {
-  margin-top: 6px;
   height: 10px;
   border-radius: 5px;
+  margin-top: 5px;
+}
+
+ion-fab-button {
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+h2 {
+  margin-bottom: 5px;
+  font-size: 1.1rem;
+}
+
+p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #555;
 }
